@@ -50,6 +50,20 @@ S0/0/0 → R-PUSAT (10.80.241.38/30); G0/0 → AP WiFi Utara (10.80.0.1/18); G0/
 
 Router lain: R-DC S0/0/0 = backbone ke R-PUSAT, G0/1 & G0/2 = LAN-nya; SELATAN/TIMUR/BARAT sama pola (S0/0/0 backbone). R-ISP: G0/0 = 203.0.113.41/30 (straight ke PUSAT), G0/1 = 8.8.8.1/24.
 
+## Soal 2 — DHCP
+> **Ketentuan:** Perangkat pengguna mendapat alamat, gateway, dan DNS; CCTV Kota dilayani server DHCP di DC.
+
+Perangkat klien `PC-CCTV-KOTA` berhasil meminta dan menerima konfigurasi pengalamatan IP otomatis, Gateway, serta DNS langsung dari server pusat di Data Center (`SRV-DC`) menggunakan mekanisme *DHCP Relay* (`ip helper-address 10.80.239.2`) pada router `R-DC`.
+* **Hasil Terkonfigurasi:**
+  * **IPv4 Address:** `10.80.96.2`
+  * **Subnet Mask:** `255.255.224.0`
+  * **Default Gateway:** `10.80.96.1`
+  * **DNS Server:** `10.80.239.2`
+
+![Bukti DHCP Success](DHCP_GET_IP.png)
+
+---
+
 ## Soal 3 — Pengalamatan + Static/Default Routing
 
 Skema utama **VLSM** (hasil UTS), gateway = host pertama tiap subnet. Setiap LAN satu subnet, gateway di port routed router.
@@ -161,3 +175,25 @@ Uji: SRV-BALAIKOTA & SRV-DC ping 8.8.8.8 → 4/4 received (0% loss) masing-masin
 ![R-ISP tanpa rute privat](screenshots/isp-tanpa-rute-privat.png)
 
 **Penjelasan**: `show ip route` di R-ISP hanya memuat jaringan connected (8.8.8.0/24 dan 203.0.113.40/30) — tidak ada satu pun rute ke 10.80.0.0/16, sesuai ketentuan "R-ISP tidak boleh memiliki rute ke alamat privat internal".
+
+
+## Soal 8 — Layanan Aplikasi
+> **Ketentuan:** DNS, web, FTP, dan email berjalan dari semua wilayah.
+
+### 1. Konektivitas Lintas Subnet (Ping) & Layanan FTP
+Uji coba *Ping* dari `PC-CCTV-KOTA` ke server pusat DC berjalan lancar dengan *0% packet loss*. Sesi login ke layanan *File Transfer Protocol* (FTP) menggunakan akun `cisco` juga berhasil terhubung dengan status *Logged in*.
+* **Perintah Uji:** `ping 10.80.239.2` & `ftp 10.80.239.2`
+
+![Bukti Ping & FTP](Ping_FTP.png)
+
+### 2. Layanan DNS & Web Server (HTTP)
+Akses penjelajahan web dari klien berhasil memetakan domain lokal `http://www.k10.smartcity.lab` melalui layanan DNS menuju ke server web, menampilkan halaman portal utama Smart City Kelompok 10.
+* **URL Akses:** `http://www.k10.smartcity.lab`
+
+![Bukti Web & DNS Success](DNS_Succes.png)
+
+### 3. Layanan Email (SMTP & POP3)
+Layanan komunikasi surat elektronik (*Mail Server*) antar pengguna dalam domain lokal `k10.smartcity.lab` berhasil diuji. Pesan laporan pemantauan dari akun petugas (`petugas@k10.smartcity.lab`) sukses dikirim dan diterima kembali di kotak masuk akun admin (`admin@k10.smartcity.lab`).
+* **Status Log:** `Receive Mail Success`
+
+![Bukti Email Success](Email_succes.png)

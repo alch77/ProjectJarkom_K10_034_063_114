@@ -60,7 +60,7 @@ Perangkat klien `PC-CCTV-KOTA` berhasil meminta dan menerima konfigurasi pengala
   * **Default Gateway:** `10.80.96.1`
   * **DNS Server:** `10.80.239.2`
 
-![Bukti DHCP Success](DHCP_GET_IP.png)
+![Bukti DHCP Success](screenshots/DHCP_GET_IP.png)
 
 ---
 
@@ -184,16 +184,16 @@ Uji: SRV-BALAIKOTA & SRV-DC ping 8.8.8.8 → 4/4 received (0% loss) masing-masin
 Uji coba *Ping* dari `PC-CCTV-KOTA` ke server pusat DC berjalan lancar dengan *0% packet loss*. Sesi login ke layanan *File Transfer Protocol* (FTP) menggunakan akun `cisco` juga berhasil terhubung dengan status *Logged in*.
 * **Perintah Uji:** `ping 10.80.239.2` & `ftp 10.80.239.2`
 
-![Bukti Ping & FTP](Ping_FTP.png)
+![Bukti Ping & FTP](screenshots/Ping_FTP.png)
 
 ### 2. Layanan DNS & Web Server (HTTP)
 Akses penjelajahan web dari klien berhasil memetakan domain lokal `http://www.k10.smartcity.lab` melalui layanan DNS menuju ke server web, menampilkan halaman portal utama Smart City Kelompok 10.
 * **URL Akses:** `http://www.k10.smartcity.lab`
 
-![Bukti Web & DNS Success](DNS_Succes.png)
+![Bukti Web & DNS Success](screenshots/DNS_Succes.png)
 
 ### 3. Layanan Email (SMTP & POP3)
 Layanan komunikasi surat elektronik (*Mail Server*) antar pengguna dalam domain lokal `k10.smartcity.lab` berhasil diuji. Pesan laporan pemantauan dari akun petugas (`petugas@k10.smartcity.lab`) sukses dikirim dan diterima kembali di kotak masuk akun admin (`admin@k10.smartcity.lab`).
 * **Status Log:** `Receive Mail Success`
 
-![Bukti Email Success](Email_succes.png)
+![Bukti Email Success](screenshots/Email_succes.png)

@@ -222,33 +222,3 @@ Screenshot `Email_succes.png` menampilkan kotak masuk pada PC-CCTV-KOTA dengan s
 Pemeriksaan XML `K10_Subnetting.xlsx` menemukan formula pada seluruh tab perhitungan dan tidak menemukan token formula `#REF!` atau `#NAME?`. Pemeriksaan independen atas 20 baris VLSM (14 LAN dan 6 link yang tercatat sebagai input UTS) mendapatkan kecocokan prefix minimum serta Network ID input pada semua baris. Untuk CIDR UTS, 8 dari 20 Network ID tidak sejajar dengan prefix, sesuai peringatan yang dicatat spreadsheet. Pemeriksaan aritmetika atas 20 alokasi CIDR revisi dan 7 supernet tidak menemukan ketidaksejajaran, tumpang tindih, atau subnet di luar supernetnya.
 
 Workbook menyimpan 1.036 formula tanpa nilai hasil ter-cache dan meminta kalkulasi ulang saat dibuka (`fullCalcOnLoad`). Karena itu, hasil tampilan formula masih perlu diperiksa setelah spreadsheet dibuka/dihitung ulang di aplikasi spreadsheet. Tidak ditemukan kesalahan formula yang cukup terbukti untuk diubah; input UTS, asumsi basis `/16`, dan alokasi CIDR revisi `/15` dipertahankan. Tab `Label_Topologi` mengambil kebutuhan host dari data VLSM; perbedaan angka Utara/Barat berada pada screenshot topologi, bukan pada input spreadsheet yang diperiksa.
-
-## Checklist status bukti untuk soal 1–8
-
-Status **Incomplete** berarti ada bukti sebagian, tetapi belum cukup untuk menyatakan seluruh requirement selesai. **Unverified** berarti tidak ada bukti yang cukup untuk memastikan aspek tersebut. Snapshot lama tidak dianggap sebagai pengganti pengujian langsung di file Packet Tracer.
-
-| Soal | Status | Bukti yang tersedia | Yang masih perlu diverifikasi |
-|---|---|---|---|
-| 1. Topologi | Incomplete | `screenshots/topologi_v2.png`; uraian desain dan port map di README | Cocokkan koneksi dengan Gambar 1, status link pada file, serta seluruh label LAN. Screenshot menunjukkan jumlah host WiFi Utara/Barat yang tidak cocok dengan tab `VLSM`. |
-| 2. Tabel subnetting | Incomplete | `K10_Subnetting.xlsx` tab `VLSM`, `CIDR_UTS`, `CIDR_Revisi`, `Supernet`, `Tabel_Revisi`, dan `Alamat_Tambahan` | Cocokkan transkripsi dengan lembar UTS asli dan periksa hasil rumus setelah workbook dihitung ulang di aplikasi spreadsheet. Konfirmasi catatan bahwa CIDR revisi memerlukan `/15`. |
-| 3. Static routing | Incomplete | `screenshots/routing+nat.png`, `static-route-utara-pelabuhan.png`, `ping-host-lan-jauh.png`; uraian static route di README | Verifikasi seluruh route wajib dan khususnya default R-PELABUHAN ke R-UTARA. |
-| 4. DHCP | Incomplete | `screenshots/DHCP_GET_IP.png`, `dhcp-cctv-ipconfig.png` | Verifikasi helper dan lease di server DC serta DHCP, gateway, dan DNS untuk klien LAN lain. |
-| 5. NAT | Incomplete | `SRV-BALAIKOTA(NAT).png`, `SRV-DC(NAT).png`, `translasi-pusat.png`, `isp-tanpa-rute-privat.png` | Uji akses internet dari wilayah lain dan pastikan tidak ada route privat pada R-ISP di file saat ini. |
-| 6. GRE | Incomplete | `gre-tunnel-status.png`, `gre-tracert.png` | Verifikasi konfigurasi kedua ujung, jalur dari file saat ini, serta penjelasan; IPsec bonus belum diverifikasi. |
-| 7. OSPF | Incomplete | `ospf-neighbor-route.png`, `ospf-tanpa-static.png`, `ospf-failover-l7.png`, `ospf-failover-route.png` | Verifikasi L7, seluruh router, default route yang dipelajari otomatis, serta live failover saat link utama diputus/dipulihkan. |
-| 8. Aplikasi | Incomplete | `DNS_Succes.png`, `Ping_FTP.png`, `Email_succes.png` | Konfirmasi domain yang diwajibkan; periksa judul web agar sesuai teks brief; uji DNS/web dari wilayah berbeda, unggah FTP CCTV, dan email berhasil antara Balai Kota dan Pelabuhan. Screenshot email memuat notifikasi kegagalan. |
-
-**Batas audit:** file `.pkt` tidak diubah atau diuji dalam Packet Tracer pada audit ini. Video demo dan ZIP final belum tercatat di inventaris folder saat audit; finalisasi nama ZIP juga menunggu identitas/NRP yang dikonfirmasi.
-
-## Instruksi pemeriksaan manual di Packet Tracer
-
-Langkah berikut belum dijalankan dalam audit ini. Buka salinan kerja, jangan menimpa file utama saat melakukan uji yang memutus link.
-
-1. **Bandingkan file `.pkt`:** buka `K10_VLSM.pkt`, `K10_VLSM_AzhariDone.pkt`, dan `K10_VLSM_OSPF.pkt` satu per satu. Bandingkan nama perangkat, koneksi, status interface, label LAN, dan konfigurasi router. Jangan memilih file final hanya dari ukuran/hash.
-2. **Periksa alamat dan route statis:** pada setiap router jalankan `show ip interface brief` dan `show ip route`. Khusus R-PELABUHAN, pastikan default mengarah ke R-UTARA sesuai link L6; pada R-DC pastikan default ke R-PUSAT; pada R-PUSAT pastikan default ke R-ISP. Periksa route wajib R-PUSAT/R-UTARA, serta pastikan tabel R-ISP tidak memuat route privat.
-3. **Periksa NAT:** pada R-PUSAT jalankan `show ip nat translations` setelah klien mengakses server internet. Pastikan alamat inside global sama dengan IP publik R-PUSAT yang tercatat di spreadsheet.
-4. **Periksa DHCP:** pada PC pengguna dan PC CCTV jalankan `ipconfig /all` (atau gunakan tombol DHCP pada GUI PC). Verifikasi IP, mask, gateway, dan DNS. Pada R-DC periksa `show running-config` untuk helper pada interface CCTV; pada server DC, periksa pool dan lease melalui tab Services. Jangan ubah alamat/pool sebelum mencocokkannya dengan spreadsheet.
-5. **Periksa GRE:** pada kedua endpoint jalankan `show interfaces tunnel0` dan `show ip route`; dari PC Balai Kota jalankan `tracert` menuju host di LAN Pelabuhan. Pastikan rute spesifik yang diuji melewati tunnel. Jangan menyimpulkan payload terenkripsi kecuali IPsec benar-benar dikonfigurasi dan SA/paket ESP dapat dibuktikan.
-6. **Periksa OSPF:** hanya pada file OSPF, jalankan `show ip ospf neighbor`, `show ip route ospf`, dan `show ip route`. Verifikasi L7, neighbor Full, route OSPF, tidak adanya static route antar-router, interface LAN yang pasif, dan default route yang berasal dari R-PUSAT.
-7. **Uji failover:** simpan salinan file OSPF untuk uji; mulai ping kontinu dari LAN yang melewati R-DC/R-UTARA, putuskan link utama dalam salinan, amati route dan pemulihan melalui L7, lalu pulihkan link sebelum menutup salinan. Jangan simpan perubahan uji ke file dasar.
-8. **Periksa layanan:** pada server DC periksa DNS records untuk nama `www`, `ftp`, dan `mail` pada domain yang sudah dikonfirmasi, serta layanan FTP dan akun yang memang dikonfigurasi. Pada server Balai Kota periksa web/email. Dari wilayah berbeda, uji DNS dan web dengan nama domain; dari PC CCTV lakukan login dan upload file uji FTP; uji email dua arah antara akun pegawai Balai Kota dan Pelabuhan. Pastikan halaman web memuat teks `Portal Smart City Surabaya` dan nomor kelompok.

@@ -50,19 +50,6 @@ S0/0/0 → R-PUSAT (10.80.241.38/30); G0/0 → AP WiFi Utara (10.80.0.1/18); G0/
 
 Router lain: R-DC S0/0/0 = backbone ke R-PUSAT, G0/1 & G0/2 = LAN-nya; SELATAN/TIMUR/BARAT sama pola (S0/0/0 backbone). R-ISP: G0/0 = 203.0.113.41/30 (straight ke PUSAT), G0/1 = 8.8.8.1/24.
 
-## Soal 2 — DHCP
-> **Ketentuan:** Perangkat pengguna mendapat alamat, gateway, dan DNS; CCTV Kota dilayani server DHCP di DC.
-
-Perangkat klien `PC-CCTV-KOTA` berhasil meminta dan menerima konfigurasi pengalamatan IP otomatis, Gateway, serta DNS langsung dari server pusat di Data Center (`SRV-DC`) menggunakan mekanisme *DHCP Relay* (`ip helper-address 10.80.239.2`) pada router `R-DC`.
-* **Hasil Terkonfigurasi:**
-  * **IPv4 Address:** `10.80.96.2`
-  * **Subnet Mask:** `255.255.224.0`
-  * **Default Gateway:** `10.80.96.1`
-  * **DNS Server:** `10.80.239.2`
-
-![Bukti DHCP Success](screenshots/DHCP_GET_IP.png)
-
----
 
 ## Soal 3 — Pengalamatan + Static/Default Routing
 
@@ -137,6 +124,20 @@ R-PUSAT → 12 gateway LAN cabang 100%; antar-cabang (BARAT↔TIMUR, DC↔PUSAT,
 ![Ping host ke LAN jauh](screenshots/ping-host-lan-jauh.png)
 
 **Penjelasan**: Command Prompt SRV-BALAIKOTA (LAN 10.80.241.0/27) ping 10.80.96.1 (gateway CCTV di R-DC) — 4/4 reply, 0% loss, TTL 254. Bukti end-to-end: paket host menyeberangi R-PUSAT → serial → R-DC hanya dengan static route.
+
+## Soal 4 — DHCP
+> **Ketentuan:** Perangkat pengguna mendapat alamat, gateway, dan DNS; CCTV Kota dilayani server DHCP di DC.
+
+Perangkat klien `PC-CCTV-KOTA` berhasil meminta dan menerima konfigurasi pengalamatan IP otomatis, Gateway, serta DNS langsung dari server pusat di Data Center (`SRV-DC`) menggunakan mekanisme *DHCP Relay* (`ip helper-address 10.80.239.2`) pada router `R-DC`.
+* **Hasil Terkonfigurasi:**
+  * **IPv4 Address:** `10.80.96.2`
+  * **Subnet Mask:** `255.255.224.0`
+  * **Default Gateway:** `10.80.96.1`
+  * **DNS Server:** `10.80.239.2`
+
+![Bukti DHCP Success](screenshots/DHCP_GET_IP.png)
+
+---
 
 ## Soal 5 — NAT/PAT
 
